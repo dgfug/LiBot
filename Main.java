@@ -1,6 +1,14 @@
+/**
+
+Author: Jalp 
+
+**/
+
 import chariot.Client;
 import chariot.api.Games;
 import chariot.model.*;
+import com.github.bhlangonijr.chesslib.Board;
+import com.github.bhlangonijr.chesslib.move.MoveList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -25,7 +33,7 @@ public class Main extends ListenerAdapter {
 
     public static void main(String[] args) {
 
-        jdaBuilder = JDABuilder.createDefault("ODk2NDQxMTk1MDYzMDI5ODYw.YWHJ6w.K2zwiqeHjCxOdTuiq2d4UrQRH9w");// string toke
+        jdaBuilder = JDABuilder.createDefault("ODk2NDQxMTk1MDYzMDI5ODYw.YWHJ6w.Uqhjk9pLzwYpxWWj5ID198X-WWs");// string toke
 
         jdaBuilder.setStatus(OnlineStatus.ONLINE);
         jdaBuilder.setActivity(Activity.watching("Playing Lichess"));
@@ -57,16 +65,28 @@ public class Main extends ListenerAdapter {
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(Color.white);
-            embedBuilder.setTitle("Commands for LiBot");
-            embedBuilder.setDescription("**,help** \n to see command information for the LiBot" + "\n\n **,profile <Lichess username>** \n to see lichess profiles for given username" + "\n\n **,top10 <Lichess variant>** \n see the top 10 players list in the variant provided, includes blitz, rapid, classical, bullet, ultrabullet, horde, racingkings, koh, atomic, chess960" + "\n\n **,streaming? <Lichess username>** Check if your favorite streamer is streaming!" + "\n\n**,team <Team name>** See team information based on team named provided. **Note: if the team has spaces include - instead of space, so the house discord server will be the-house-discord-server**" + "\n\n**,daily** see the daily Lichess puzzle and try to solve it!");
+            embedBuilder.setTitle("Commands for LiSEBot");
+            embedBuilder.setDescription("**,help** \n to see command information for the LiSEBot" + "\n\n **,profile <Lichess username>** \n to see lichess profiles for given username" + "\n\n **,top10 <Lichess variant>** \n see the top 10 players list in the variant provided, includes blitz, rapid, classical, bullet, ultrabullet, horde, racingkings, koh, atomic, chess960" + "\n\n **,streaming? <Lichess username>** Check if your favorite streamer is streaming!" + "\n\n**,team <Team name>** See team information based on team named provided. **Note: if the team has spaces include - instead of space, so the house discord server will be the-house-discord-server**" + "\n\n**,daily** see the daily Lichess puzzle and try to solve it!" + "\n\n **,arena <Lichess arena URL>** see the standings and tournament information for given tournament link" + "\n\n **,invite** invite LiSEBot to your servers");
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
-         /**
-          * ,profile command to see people's lichess profiles
-          * input: Lichess username
-          * output the whole Lichess  profile
-          */
+
+        String inv = event.getMessage().getContentRaw();
+
+        if(inv.equals(",invite")){
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setColor(Color.white);
+            embedBuilder.setTitle("invite me!");
+            embedBuilder.setDescription("\n [Click Here to invite LiSEBot](" + "https://discord.com/api/oauth2/authorize?client_id=896441195063029860&permissions=0&scope=bot%20applications.commands" +")");
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
+        }
+
+
+        /**
+         * ,profile command to see people's lichess profiles
+         * input: Lichess username
+         * output the whole Lichess  profile
+         */
 
         String[] commandtwo = event.getMessage().getContentRaw().split(" ");
 
@@ -547,14 +567,7 @@ public class Main extends ListenerAdapter {
 
 
 
-
-
-
-
-
-
-
-                }
+        }
 
 
         /**
@@ -626,47 +639,47 @@ public class Main extends ListenerAdapter {
         }
 
 
-           String[] teams = event.getMessage().getContentRaw().split(" ");
+        String[] teams = event.getMessage().getContentRaw().split(" ");
 
-           String lowerCase = teams[1].toLowerCase();
-
-
-           if(teams[0].equals(",team")){
-               Result<Team> result = client.teams().byTeamId(lowerCase);
+        String lowerCase = teams[1].toLowerCase();
 
 
-
-               if(result.isPresent()){ // check if the team is present
-                   Team team = result.get();
-
-                   List<LightUser> leader = team.leaders();
-
-                   String leadernames = "";
-
-
-                   for(int i = 0; i < leader.size(); i++){
-                       leadernames += leader.get(i).title() + " " + leader.get(i).name() + " \n";
-                   }
-
-                   EmbedBuilder embedBuilder = new EmbedBuilder();
-
-                   String url = "https://lichess.org/team/" + team.id();
-
-                   String tournaurl = url + "/tournaments";
-
-                   embedBuilder.setTitle(team.name() + " " + "Information");
-                   embedBuilder.setColor(Color.white);
-                   embedBuilder.setDescription("**Team name:** \n " + team.name() + "\n \n **Team Leaders:** \n" + leadernames + "\n\n **Team Members:** \n" + team.nbMembers()  + "\n\n [Join team](" + url + ")" + "\n\n [Tournaments](" + tournaurl + ")");
-                   event.getChannel().sendMessage(embedBuilder.build()).queue();
-
-
-               }else{
-                   event.getChannel().sendMessage("Team not found, Please try again!");
-               }
+        if(teams[0].equals(",team")){
+            Result<Team> result = client.teams().byTeamId(lowerCase);
 
 
 
-           }
+            if(result.isPresent()){ // check if the team is present
+                Team team = result.get();
+
+                List<LightUser> leader = team.leaders();
+
+                String leadernames = "";
+
+
+                for(int i = 0; i < leader.size(); i++){
+                    leadernames += leader.get(i).title() + " " + leader.get(i).name() + " \n";
+                }
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+
+                String url = "https://lichess.org/team/" + team.id();
+
+                String tournaurl = url + "/tournaments";
+
+                embedBuilder.setTitle(team.name() + " " + "Information");
+                embedBuilder.setColor(Color.white);
+                embedBuilder.setDescription("**Team name:** \n " + team.name() + "\n \n **Team Leaders:** \n" + leadernames + "\n\n **Team Members:** \n" + team.nbMembers()  + "\n\n [Join team](" + url + ")" + "\n\n [Tournaments](" + tournaurl + ")");
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+
+            }else{
+                event.getChannel().sendMessage("Team not found, Please try again!");
+            }
+
+
+
+        }
 
 
         /**
@@ -684,69 +697,133 @@ public class Main extends ListenerAdapter {
 
         String puzzle = event.getMessage().getContentRaw();
 
-           if(puzzle.equals(",daily")){
+        if(puzzle.equals(",daily")){
 
-               Result<Puzzle> dailypuzzle = client.puzzles().dailyPuzzle();
+            Result<Puzzle> dailypuzzle = client.puzzles().dailyPuzzle();
 
-               if(dailypuzzle.isPresent()){ // check if the puzzle is present
-                   Puzzle puzzle1 = dailypuzzle.get();
+            if(dailypuzzle.isPresent()){ // check if the puzzle is present
+                Puzzle puzzle1 = dailypuzzle.get();
 
-                   Puzzle.PuzzleInfo puzzleInfo = puzzle1.puzzle();
+                Puzzle.PuzzleInfo puzzleInfo = puzzle1.puzzle();
 
-                   String url = "https://lichess.org/training/daily";
+                String url = "https://lichess.org/training/daily";
 
-                   int puzzleRating = puzzleInfo.rating();
-                   List<String> themes = puzzleInfo.themes();
+                int puzzleRating = puzzleInfo.rating();
+                List<String> themes = puzzleInfo.themes();
 
-                   String the = "";
+                String the = "";
 
-                   for(int i = 0; i < themes.size(); i++){
-                       the += themes.get(i) + " \n ";
-                   }
+                for(int i = 0; i < themes.size(); i++){
+                    the += themes.get(i) + " \n ";
+                }
 
-                   EmbedBuilder embedBuilder = new EmbedBuilder();
-                   embedBuilder.setColor(Color.white);
-                   embedBuilder.setTitle("Daily Puzzle");
-                   embedBuilder.setDescription("**Puzzle rating:** \n" + puzzleRating + "\n\n **Puzzle Themes:** \n " + the + "\n [Try the Puzzle](" + url + ")");
-                   event.getChannel().sendMessage(embedBuilder.build()).queue();
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.white);
+                embedBuilder.setTitle("Daily Puzzle");
+                embedBuilder.setDescription("**Puzzle rating:** \n" + puzzleRating + "\n\n **Puzzle Themes:** \n " + the + "\n [Try the Puzzle](" + url + ")");
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
 
-               }
-
-
-
-           }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            }
 
 
 
         }
+
+
+
+
+
+        /**
+         *
+         * ,arena command to see arena page of given link
+         *
+         * input: Lichess link for that arena
+         *
+         * output: The whole arena page including, the tournament name, time duration, variant, number of players,
+         * and of course the player standings, also provide the team name if the tournament is a team battle
+         *
+         *
+         *
+         */
+
+
+
+
+        String[] arenaResult = event.getMessage().getContentRaw().split(" ");
+
+
+        if(arenaResult[0].equals(",arena")){
+
+            String url = arenaResult[1];
+
+            String[] spliturl = url.split("tournament/");
+
+            String touryID = "";
+
+            for(String a: spliturl){
+
+                touryID = a;
+
+            }
+
+
+
+
+            Result<Arena> arenaResult1 = client.tournaments().arenaById(touryID);
+
+            if(arenaResult1.isPresent()){
+
+                Arena arena = arenaResult1.get();
+
+                String name = arena.fullName();
+
+                int numPlayers = arena.nbPlayers();
+
+                int timeLeft = arena.minutes();
+
+                Arena.Perf perf = arena.perf();
+
+                String perfname = perf.name();
+
+                String stand = "";
+
+
+                Arena.Standing standing = arena.standing();
+
+
+                List<Arena.Standing.Player> players=standing.players();
+
+                for(int i = 0; i < players.size(); i++){
+
+                    stand += players.get(i).rank() + " " + players.get(i).name() + "  " + players.get(i).rating() + "  " + players.get(i).score() + " " + players.get(i).team() + "\n ------------------------------------------------------------------- \n ";
+
+
+                }
+
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.white);
+                embedBuilder.setTitle(name);
+                embedBuilder.setDescription("**Tournament Name:** "+ name + "\n\n**Variant:** " + perfname + "\n" + "\n\n **Time Duration :** " + timeLeft + " mins"   +"\n **Total Players:** " + numPlayers + "\n\n **Standings:**" + "\n \n **Rank:**  **Username**  **Rating:**  **Score** \n \n " + stand + "\n\n" + "[View on Lichess](" + arenaResult[1] + ")");
+
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+
+
+
+
+
+
+
+            }
+
+
+        }
+
+
+
+
+
 
 
 
@@ -773,6 +850,44 @@ public class Main extends ListenerAdapter {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
 
 
 
