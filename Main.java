@@ -33,7 +33,7 @@ public class Main extends ListenerAdapter {
 
     public static void main(String[] args) {
 
-        jdaBuilder = JDABuilder.createDefault("ODk2NDQxMTk1MDYzMDI5ODYw.YWHJ6w.Uqhjk9pLzwYpxWWj5ID198X-WWs");// string toke
+        jdaBuilder = JDABuilder.createDefault("lichess rocks lichess rocks lichess rocks");// string token
 
         jdaBuilder.setStatus(OnlineStatus.ONLINE);
         jdaBuilder.setActivity(Activity.watching("Playing Lichess"));
