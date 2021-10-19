@@ -823,6 +823,346 @@ public class Main extends ListenerAdapter {
 
 
 
+            /**
+             * 
+             * ,stormdash command to see the storm score for given user
+             * 
+             * 
+             * input: username
+             * 
+             * output the score
+             * 
+             * 
+             * 
+             */
+
+
+        }
+
+
+        String[] stormDash = event.getMessage().getContentRaw().split(" ");
+
+
+        if (stormDash[0].equals(",stormdash")) {
+
+            String lowercase1 = stormDash[0].toLowerCase();
+
+            Result<StormDashboard> dash = client.puzzles().stormDashboard(lowercase1);
+
+            String dashs = "";
+
+            String highestscore = "";
+
+            if (dash.isPresent()) {
+
+                StormDashboard dashboard = dash.get();
+
+                List<StormDashboard.Day> day = dashboard.days();
+                StormDashboard.High high = dashboard.high();
+
+                int allTime = high.allTime();
+
+                int month = high.month();
+
+                int week = high.week();
+
+                int today = high.day();
+
+                String link = "https://lichess.org/storm/dashboard/" + stormDash[1];
+
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.white);
+                embedBuilder.setTitle("StormDashboard for: " + stormDash[1]);
+                embedBuilder.setDescription(" All Time High score: **" + allTime + "** \n \n This Month: **" + month + "**" + "\n\n This Week: **" + week + "** \n \n Today:** " + today + "**" + "\n\n [View on Lichess](" + link + ")");
+
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+
+            } else {
+                event.getChannel().sendMessage("This user is not present  ;/").queue();
+            }
+
+
+        }
+
+
+
+
+
+
+
+
+    /**
+     *
+     *
+     * ,play command gives the user an open ended challenge where the two users can join to play
+     *
+     * input:  ,play [variant] [rated/casual]
+     *
+     *
+     * output: the openended challenge for 2 users to play
+     *
+     *
+     *
+     *
+     * ≤ 29s = UltraBullet
+     * ≤ 179s = Bullet
+     * ≤ 479s = Blitz
+     * ≤ 1499s = Rapid
+     * ≥ 1500s = Classical
+     *
+     *
+     *
+     *
+     *
+     * */
+
+
+     String[] challenge1 = event.getMessage().getContentRaw().split(" ");
+
+
+     if(challenge1[0].equals(",play")){
+
+
+        if (challenge1[1].equals("rapid")) {
+
+
+            if (challenge1[2].equals("rated")) {
+
+
+                var clientone = Client.basic();
+
+                var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(300, 5).rated(true));
+
+                result.ifPresent(play -> {
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setColor(Color.white);
+                    embedBuilder.setTitle("Challenge rapid rated loaded!");
+                    embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                    event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                });
+
+
+            }
+
+
+            else if (challenge1[2].equals("casual")) {
+
+
+                var clientone = Client.basic();
+
+                var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(300, 5).rated(false));
+
+                result.ifPresent(play -> {
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setColor(Color.white);
+                    embedBuilder.setTitle("Challenge rapid Casual loaded!");
+                    embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                    event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                });
+
+
+            }
+
+
+
+        }
+
+
+         if (challenge1[1].equals("blitz")) {
+
+
+             if (challenge1[2].equals("rated")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(180, 2).rated(true));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Blitz rated loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+             if (challenge1[2].equals("casual")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(180, 2).rated(false));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Blitz Casual loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+         }
+
+
+
+         if (challenge1[1].equals("classical")) {
+
+
+             if (challenge1[2].equals("rated")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  1800 , 20).rated(true));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Classical rated loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+
+             if (challenge1[2].equals("casual")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  1800 , 20).rated(false));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Classical Casual loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+         }
+
+
+         if (challenge1[1].equals("bullet")) {
+
+
+             if (challenge1[2].equals("rated")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  60 , 0).rated(true));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Bullet rated loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+             if (challenge1[2].equals("casual")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  60 , 0).rated(false));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Bullet casual loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+
+         }
+
+
+
+         if (challenge1[1].equals("ultrabullet")) {
+
+
+             if (challenge1[2].equals("rated")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  15 , 0).rated(true));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge UltraBullet rated loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+             if (challenge1[2].equals("casual")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  15 , 0).rated(false));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge UltraBullet casual loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+
+         }
+       
+
+
+
+
 
 
 
