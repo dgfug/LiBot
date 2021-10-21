@@ -147,6 +147,23 @@ public class Main extends ListenerAdapter {
                     String titledPlayer = user.title();
 
                     Boolean hasTitle = false;
+                    
+                    
+                    boolean pat = user.patron();
+
+                    String patWings = "";
+
+
+
+                    if(pat == true){
+                        patWings += "https://cdn.discordapp.com/emojis/900426733814165534.png?size=96";
+
+
+                    }else{
+                        patWings += " https://www.google.com/url?sa=i&url=https%3A%2F%2Flichess.fandom.com%2Fwiki%2FHorsey&psig=AOvVaw27c2RGn3iSXKXx26gOqKlo&ust=1634835688231000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCIiPvvC72fMCFQAAAAAdAAAAABAJ";
+
+                    }
+                    
 
 
 
@@ -175,6 +192,7 @@ public class Main extends ListenerAdapter {
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.white);
+                    embedBuilder.setThumbnail(patWings);
                     embedBuilder.setTitle("Lichess Profile for: " + name);
                     embedBuilder.setDescription("**Username:** " + "" + sayTitle + "  " + name + "\n \n **User bio:** " + bio + "\n \n **Games** \n \n" + "**All Games**: " + all + "\n" + "**wins:** " + wins + "\n **Loses:** " + lose + "\n **draws:** " + draw + "\n **Playing:** " + playing + "\n \n **Patron Status: ** " + " " + patr + " \n \n  [See Stats on Lichess](" + userUrl + ")");
 
