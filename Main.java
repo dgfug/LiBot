@@ -1,6 +1,14 @@
+/**
+
+Author: Jalp 
+
+**/
+
 import chariot.Client;
 import chariot.api.Games;
 import chariot.model.*;
+import com.github.bhlangonijr.chesslib.Board;
+import com.github.bhlangonijr.chesslib.move.MoveList;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -25,7 +33,7 @@ public class Main extends ListenerAdapter {
 
     public static void main(String[] args) {
 
-        jdaBuilder = JDABuilder.createDefault("ODk2NDQxMTk1MDYzMDI5ODYw.YWHJ6w.K2zwiqeHjCxOdTuiq2d4UrQRH9w");// string toke
+        jdaBuilder = JDABuilder.createDefault("lichess rocks lichess rocks lichess rocks");// string token
 
         jdaBuilder.setStatus(OnlineStatus.ONLINE);
         jdaBuilder.setActivity(Activity.watching("Playing Lichess"));
@@ -57,16 +65,28 @@ public class Main extends ListenerAdapter {
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setColor(Color.white);
-            embedBuilder.setTitle("Commands for LiBot");
-            embedBuilder.setDescription("**,help** \n to see command information for the LiBot" + "\n\n **,profile <Lichess username>** \n to see lichess profiles for given username" + "\n\n **,top10 <Lichess variant>** \n see the top 10 players list in the variant provided, includes blitz, rapid, classical, bullet, ultrabullet, horde, racingkings, koh, atomic, chess960" + "\n\n **,streaming? <Lichess username>** Check if your favorite streamer is streaming!" + "\n\n**,team <Team name>** See team information based on team named provided. **Note: if the team has spaces include - instead of space, so the house discord server will be the-house-discord-server**" + "\n\n**,daily** see the daily Lichess puzzle and try to solve it!");
+            embedBuilder.setTitle("Commands for LiSEBot");
+            embedBuilder.setDescription("**,help** \n to see command information for the LiSEBot" + "\n\n **,profile <Lichess username>** \n to see lichess profiles for given username" + "\n\n **,top10 <Lichess variant>** \n see the top 10 players list in the variant provided, includes blitz, rapid, classical, bullet, ultrabullet, horde, racingkings, koh, atomic, chess960" + "\n\n **,streaming? <Lichess username>** Check if your favorite streamer is streaming!" + "\n\n**,team <Team name>** See team information based on team named provided. **Note: if the team has spaces include - instead of space, so the house discord server will be the-house-discord-server**" + "\n\n**,daily** see the daily Lichess puzzle and try to solve it!" + "\n\n **,arena <Lichess arena URL>** see the standings and tournament information for given tournament link" + "\n\n **,invite** invite LiSEBot to your servers");
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
-         /**
-          * ,profile command to see people's lichess profiles
-          * input: Lichess username
-          * output the whole Lichess  profile
-          */
+
+        String inv = event.getMessage().getContentRaw();
+
+        if(inv.equals(",invite")){
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setColor(Color.white);
+            embedBuilder.setTitle("invite me!");
+            embedBuilder.setDescription("\n [Click Here to invite LiSEBot](" + "https://discord.com/api/oauth2/authorize?client_id=896441195063029860&permissions=0&scope=bot%20applications.commands" +")");
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
+        }
+
+
+        /**
+         * ,profile command to see people's lichess profiles
+         * input: Lichess username
+         * output the whole Lichess  profile
+         */
 
         String[] commandtwo = event.getMessage().getContentRaw().split(" ");
 
@@ -127,6 +147,23 @@ public class Main extends ListenerAdapter {
                     String titledPlayer = user.title();
 
                     Boolean hasTitle = false;
+                    
+                    
+                    boolean pat = user.patron();
+
+                    String patWings = "";
+
+
+
+                    if(pat == true){
+                        patWings += "https://cdn.discordapp.com/emojis/900426733814165534.png?size=96";
+
+
+                    }else{
+                        patWings += " https://www.google.com/url?sa=i&url=https%3A%2F%2Flichess.fandom.com%2Fwiki%2FHorsey&psig=AOvVaw27c2RGn3iSXKXx26gOqKlo&ust=1634835688231000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCIiPvvC72fMCFQAAAAAdAAAAABAJ";
+
+                    }
+                    
 
 
 
@@ -155,6 +192,7 @@ public class Main extends ListenerAdapter {
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.white);
+                    embedBuilder.setThumbnail(patWings);
                     embedBuilder.setTitle("Lichess Profile for: " + name);
                     embedBuilder.setDescription("**Username:** " + "" + sayTitle + "  " + name + "\n \n **User bio:** " + bio + "\n \n **Games** \n \n" + "**All Games**: " + all + "\n" + "**wins:** " + wins + "\n **Loses:** " + lose + "\n **draws:** " + draw + "\n **Playing:** " + playing + "\n \n **Patron Status: ** " + " " + patr + " \n \n  [See Stats on Lichess](" + userUrl + ")");
 
@@ -547,14 +585,7 @@ public class Main extends ListenerAdapter {
 
 
 
-
-
-
-
-
-
-
-                }
+        }
 
 
         /**
@@ -626,47 +657,47 @@ public class Main extends ListenerAdapter {
         }
 
 
-           String[] teams = event.getMessage().getContentRaw().split(" ");
+        String[] teams = event.getMessage().getContentRaw().split(" ");
 
-           String lowerCase = teams[1].toLowerCase();
-
-
-           if(teams[0].equals(",team")){
-               Result<Team> result = client.teams().byTeamId(lowerCase);
+        String lowerCase = teams[1].toLowerCase();
 
 
-
-               if(result.isPresent()){ // check if the team is present
-                   Team team = result.get();
-
-                   List<LightUser> leader = team.leaders();
-
-                   String leadernames = "";
-
-
-                   for(int i = 0; i < leader.size(); i++){
-                       leadernames += leader.get(i).title() + " " + leader.get(i).name() + " \n";
-                   }
-
-                   EmbedBuilder embedBuilder = new EmbedBuilder();
-
-                   String url = "https://lichess.org/team/" + team.id();
-
-                   String tournaurl = url + "/tournaments";
-
-                   embedBuilder.setTitle(team.name() + " " + "Information");
-                   embedBuilder.setColor(Color.white);
-                   embedBuilder.setDescription("**Team name:** \n " + team.name() + "\n \n **Team Leaders:** \n" + leadernames + "\n\n **Team Members:** \n" + team.nbMembers()  + "\n\n [Join team](" + url + ")" + "\n\n [Tournaments](" + tournaurl + ")");
-                   event.getChannel().sendMessage(embedBuilder.build()).queue();
-
-
-               }else{
-                   event.getChannel().sendMessage("Team not found, Please try again!");
-               }
+        if(teams[0].equals(",team")){
+            Result<Team> result = client.teams().byTeamId(lowerCase);
 
 
 
-           }
+            if(result.isPresent()){ // check if the team is present
+                Team team = result.get();
+
+                List<LightUser> leader = team.leaders();
+
+                String leadernames = "";
+
+
+                for(int i = 0; i < leader.size(); i++){
+                    leadernames += leader.get(i).title() + " " + leader.get(i).name() + " \n";
+                }
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+
+                String url = "https://lichess.org/team/" + team.id();
+
+                String tournaurl = url + "/tournaments";
+
+                embedBuilder.setTitle(team.name() + " " + "Information");
+                embedBuilder.setColor(Color.white);
+                embedBuilder.setDescription("**Team name:** \n " + team.name() + "\n \n **Team Leaders:** \n" + leadernames + "\n\n **Team Members:** \n" + team.nbMembers()  + "\n\n [Join team](" + url + ")" + "\n\n [Tournaments](" + tournaurl + ")");
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+
+            }else{
+                event.getChannel().sendMessage("Team not found, Please try again!");
+            }
+
+
+
+        }
 
 
         /**
@@ -684,69 +715,473 @@ public class Main extends ListenerAdapter {
 
         String puzzle = event.getMessage().getContentRaw();
 
-           if(puzzle.equals(",daily")){
+        if(puzzle.equals(",daily")){
 
-               Result<Puzzle> dailypuzzle = client.puzzles().dailyPuzzle();
+            Result<Puzzle> dailypuzzle = client.puzzles().dailyPuzzle();
 
-               if(dailypuzzle.isPresent()){ // check if the puzzle is present
-                   Puzzle puzzle1 = dailypuzzle.get();
+            if(dailypuzzle.isPresent()){ // check if the puzzle is present
+                Puzzle puzzle1 = dailypuzzle.get();
 
-                   Puzzle.PuzzleInfo puzzleInfo = puzzle1.puzzle();
+                Puzzle.PuzzleInfo puzzleInfo = puzzle1.puzzle();
 
-                   String url = "https://lichess.org/training/daily";
+                String url = "https://lichess.org/training/daily";
 
-                   int puzzleRating = puzzleInfo.rating();
-                   List<String> themes = puzzleInfo.themes();
+                int puzzleRating = puzzleInfo.rating();
+                List<String> themes = puzzleInfo.themes();
 
-                   String the = "";
+                String the = "";
 
-                   for(int i = 0; i < themes.size(); i++){
-                       the += themes.get(i) + " \n ";
-                   }
+                for(int i = 0; i < themes.size(); i++){
+                    the += themes.get(i) + " \n ";
+                }
 
-                   EmbedBuilder embedBuilder = new EmbedBuilder();
-                   embedBuilder.setColor(Color.white);
-                   embedBuilder.setTitle("Daily Puzzle");
-                   embedBuilder.setDescription("**Puzzle rating:** \n" + puzzleRating + "\n\n **Puzzle Themes:** \n " + the + "\n [Try the Puzzle](" + url + ")");
-                   event.getChannel().sendMessage(embedBuilder.build()).queue();
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.white);
+                embedBuilder.setTitle("Daily Puzzle");
+                embedBuilder.setDescription("**Puzzle rating:** \n" + puzzleRating + "\n\n **Puzzle Themes:** \n " + the + "\n [Try the Puzzle](" + url + ")");
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
 
-               }
-
-
-
-           }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            }
 
 
 
         }
+
+
+
+
+
+        /**
+         *
+         * ,arena command to see arena page of given link
+         *
+         * input: Lichess link for that arena
+         *
+         * output: The whole arena page including, the tournament name, time duration, variant, number of players,
+         * and of course the player standings, also provide the team name if the tournament is a team battle
+         *
+         *
+         *
+         */
+
+
+
+
+        String[] arenaResult = event.getMessage().getContentRaw().split(" ");
+
+
+        if(arenaResult[0].equals(",arena")){
+
+            String url = arenaResult[1];
+
+            String[] spliturl = url.split("tournament/");
+
+            String touryID = "";
+
+            for(String a: spliturl){
+
+                touryID = a;
+
+            }
+
+
+
+
+            Result<Arena> arenaResult1 = client.tournaments().arenaById(touryID);
+
+            if(arenaResult1.isPresent()){
+
+                Arena arena = arenaResult1.get();
+
+                String name = arena.fullName();
+
+                int numPlayers = arena.nbPlayers();
+
+                int timeLeft = arena.minutes();
+
+                Arena.Perf perf = arena.perf();
+
+                String perfname = perf.name();
+
+                String stand = "";
+
+
+                Arena.Standing standing = arena.standing();
+
+
+                List<Arena.Standing.Player> players=standing.players();
+
+                for(int i = 0; i < players.size(); i++){
+
+                    stand += players.get(i).rank() + " " + players.get(i).name() + "  " + players.get(i).rating() + "  " + players.get(i).score() + " " + players.get(i).team() + "\n ------------------------------------------------------------------- \n ";
+
+
+                }
+
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.white);
+                embedBuilder.setTitle(name);
+                embedBuilder.setDescription("**Tournament Name:** "+ name + "\n\n**Variant:** " + perfname + "\n" + "\n\n **Time Duration :** " + timeLeft + " mins"   +"\n **Total Players:** " + numPlayers + "\n\n **Standings:**" + "\n \n **Rank:**  **Username**  **Rating:**  **Score** \n \n " + stand + "\n\n" + "[View on Lichess](" + arenaResult[1] + ")");
+
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+
+
+
+
+
+
+
+            }
+
+
+        }
+
+
+
+
+            /**
+             * 
+             * ,stormdash command to see the storm score for given user
+             * 
+             * 
+             * input: username
+             * 
+             * output the score
+             * 
+             * 
+             * 
+             */
+
+
+        }
+
+
+        String[] stormDash = event.getMessage().getContentRaw().split(" ");
+
+
+        if (stormDash[0].equals(",stormdash")) {
+
+            String lowercase1 = stormDash[0].toLowerCase();
+
+            Result<StormDashboard> dash = client.puzzles().stormDashboard(lowercase1);
+
+            String dashs = "";
+
+            String highestscore = "";
+
+            if (dash.isPresent()) {
+
+                StormDashboard dashboard = dash.get();
+
+                List<StormDashboard.Day> day = dashboard.days();
+                StormDashboard.High high = dashboard.high();
+
+                int allTime = high.allTime();
+
+                int month = high.month();
+
+                int week = high.week();
+
+                int today = high.day();
+
+                String link = "https://lichess.org/storm/dashboard/" + stormDash[1];
+
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(Color.white);
+                embedBuilder.setTitle("StormDashboard for: " + stormDash[1]);
+                embedBuilder.setDescription(" All Time High score: **" + allTime + "** \n \n This Month: **" + month + "**" + "\n\n This Week: **" + week + "** \n \n Today:** " + today + "**" + "\n\n [View on Lichess](" + link + ")");
+
+                event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+
+            } else {
+                event.getChannel().sendMessage("This user is not present  ;/").queue();
+            }
+
+
+        }
+
+
+
+
+
+
+
+
+    /**
+     *
+     *
+     * ,play command gives the user an open ended challenge where the two users can join to play
+     *
+     * input:  ,play [variant] [rated/casual]
+     *
+     *
+     * output: the openended challenge for 2 users to play
+     *
+     *
+     *
+     *
+     * ≤ 29s = UltraBullet
+     * ≤ 179s = Bullet
+     * ≤ 479s = Blitz
+     * ≤ 1499s = Rapid
+     * ≥ 1500s = Classical
+     *
+     *
+     *
+     *
+     *
+     * */
+
+
+     String[] challenge1 = event.getMessage().getContentRaw().split(" ");
+
+
+     if(challenge1[0].equals(",play")){
+
+
+        if (challenge1[1].equals("rapid")) {
+
+
+            if (challenge1[2].equals("rated")) {
+
+
+                var clientone = Client.basic();
+
+                var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(300, 5).rated(true));
+
+                result.ifPresent(play -> {
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setColor(Color.white);
+                    embedBuilder.setTitle("Challenge rapid rated loaded!");
+                    embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                    event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                });
+
+
+            }
+
+
+            else if (challenge1[2].equals("casual")) {
+
+
+                var clientone = Client.basic();
+
+                var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(300, 5).rated(false));
+
+                result.ifPresent(play -> {
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setColor(Color.white);
+                    embedBuilder.setTitle("Challenge rapid Casual loaded!");
+                    embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                    event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                });
+
+
+            }
+
+
+
+        }
+
+
+         if (challenge1[1].equals("blitz")) {
+
+
+             if (challenge1[2].equals("rated")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(180, 2).rated(true));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Blitz rated loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+             if (challenge1[2].equals("casual")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(180, 2).rated(false));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Blitz Casual loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+         }
+
+
+
+         if (challenge1[1].equals("classical")) {
+
+
+             if (challenge1[2].equals("rated")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  1800 , 20).rated(true));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Classical rated loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+
+             if (challenge1[2].equals("casual")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  1800 , 20).rated(false));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Classical Casual loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+         }
+
+
+         if (challenge1[1].equals("bullet")) {
+
+
+             if (challenge1[2].equals("rated")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  60 , 0).rated(true));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Bullet rated loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+             if (challenge1[2].equals("casual")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  60 , 0).rated(false));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge Bullet casual loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+
+         }
+
+
+
+         if (challenge1[1].equals("ultrabullet")) {
+
+
+             if (challenge1[2].equals("rated")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  15 , 0).rated(true));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge UltraBullet rated loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+             if (challenge1[2].equals("casual")) {
+
+
+                 var clientone = Client.basic();
+
+                 var result = clientone.challenges().challengeOpenEnded(conf -> conf.clock(  15 , 0).rated(false));
+
+                 result.ifPresent(play -> {
+                     EmbedBuilder embedBuilder = new EmbedBuilder();
+                     embedBuilder.setColor(Color.white);
+                     embedBuilder.setTitle("Challenge UltraBullet casual loaded!");
+                     embedBuilder.setDescription("\n player playing white [Click to Join the game](" + play.urlWhite() + ")" + "\n\n player playing black [Click to join the game](" + play.urlBlack() + ")");
+                     event.getChannel().sendMessage(embedBuilder.build()).queue();
+
+                 });
+
+
+             }
+
+
+
+         }
+       
+
+
+
+
+
 
 
 
@@ -773,6 +1208,44 @@ public class Main extends ListenerAdapter {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
 
 
 
